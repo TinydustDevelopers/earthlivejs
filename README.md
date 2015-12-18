@@ -25,8 +25,8 @@ Fetch photo of the earth every 5 minutes from [himawari-8](http://himawari8.nict
 
 4.  Fetch photo
 
-    ```sh
-    http://localhost:3000
+    ```
+    http://localhost:3000/latest
     ```
 
 ## License
