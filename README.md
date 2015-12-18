@@ -1,7 +1,7 @@
-Earth Live JS
+fetch-himawari8
 =======
 
-A NodeJS re-authored of [EarthLiveSharp](https://github.com/bitdust/EarthLiveSharp).
+获取向日葵 8 号的 Web action 栗子，fork 自 [djyde/earthlivejs](https://github.com/djyde/earthlivejs)
 
 Fetch photo of the earth every 5 minutes from [himawari-8](http://himawari8.nict.go.jp/) ([wiki](https://en.wikipedia.org/wiki/Himawari_8)).
 
@@ -10,8 +10,8 @@ Fetch photo of the earth every 5 minutes from [himawari-8](http://himawari8.nict
 1.  Clone this repository
 
     ```sh
-    git clone https://github.com/oxoooo/earthlivejs.git
-    cd earthlivejs
+    git clone https://github.com/TinydustDevelopers/fetch-himawari8.git
+    cd fetch-himawari8
     ```
 
 2.  Install necessary libraries for `node-canvas` as describe [here](https://github.com/Automattic/node-canvas#installation)
@@ -23,11 +23,11 @@ Fetch photo of the earth every 5 minutes from [himawari-8](http://himawari8.nict
     npm start
     ```
 
-4.  Set the `images` folder as your wallpaper slides switches every 5 minutes.
+4.  Fetch photo
 
-Keep the script running, it will fetches the latest image every 5 minutes and cleans outdated images.
-
-You can also use something like [forever](https://github.com/foreverjs/forever) or [pm2](http://pm2.keymetrics.io) to run the script in the background.
+    ```sh
+    http://localhost:3000
+    ```
 
 ## License
 
