@@ -1,0 +1,17 @@
+{
+  "server": {
+    "url": "localhost:3000",
+    "method": "GET"
+  },
+  "name": {
+    "cn": "获取向日葵 8 号的最新卫星图片",
+    "en": "Get latest satellite image from Himawari 8"
+  },
+  "icon": "http://firicon.fir.im/7ad272d48806e061f5b3e22673b80c3117e82607",
+  "required": [],
+  "optional": [],
+  "returns": [{
+    "count": 1,
+    "type": "ImageURL"
+  }]
+}
