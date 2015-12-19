@@ -3,3 +3,4 @@ node_modules
 images
 *.log
 config.js
+db.json

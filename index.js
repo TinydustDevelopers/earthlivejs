@@ -6,7 +6,11 @@ var moment = require('moment')
 var path = require('path')
 var format = require('util').format
 var restify = require('restify')
-var cdnify = require('./upload')
+const cdnify = require('./upload')
+const low = require('lowdb')
+const storage = require('lowdb/file-async')
+
+const db = low('db.json', { storage })
 
 const CDN_HOST = 'http://7xpbf9.com2.z0.glb.qiniucdn.com/'
 const SIZE = 550
@@ -14,7 +18,13 @@ const SPLITS = 4
 
 var PATH = path.join(__dirname, 'images')
 
+var image = db('images').takeRight()[0]
+
 var latestImageLocation = ''
+
+if (image) {
+  latestImageLocation = image.url
+}
 
 try {
   fs.accessSync(PATH)
@@ -38,6 +48,7 @@ var createImage = function (buffer) {
 }
 
 var fetch = function () {
+  console.log('fetching...')
   var time = moment()
   time.subtract(30, 'minutes')
   time.subtract(time.utcOffset(), 'minutes')
@@ -56,7 +67,7 @@ var fetch = function () {
 
   async.parallel(requests, function (err, results) {
     if (err) {
-      console.error('failed to fetch images %s', readableTime)
+      console.error('failed to fetch images %s, error: %s', readableTime, err)
       console.error(err.trace)
       return
     }
@@ -83,38 +94,24 @@ var fetch = function () {
     canvas.createPNGStream().pipe(fs.createWriteStream(path.join(PATH, output)))
 
     cdnify(output, path.join(PATH, output))
-     .then(reply => {
-       console.log('uploaded to qiniu, key: %s, hash: %s, at %s', reply.key, reply.hash, new Date())
-       latestImageLocation = CDN_HOST + reply.key
+      .then(reply => {
+        console.log('uploaded to qiniu, key: %s, hash: %s, at %s', reply.key, reply.hash, new Date())
+        latestImageLocation = CDN_HOST + reply.key
+
+        db('images')
+          .chain()
+          .push({ url: CDN_HOST + reply.key })
+          .remove(element => {
+            return latestImageLocation !== element.url
+          })
+          .value()
+
+        fs.unlinkSync(path.join(PATH, output))
      })
      .catch(err => {
        console.error(err)
        console.error(err.stack)
      })
-
-    var clean = moment().subtract(7, 'minutes')
-
-    fs.readdirSync(PATH).forEach(function (file) {
-      if ('.png' != path.extname(file)) {
-        return
-      }
-
-      var time = parseInt(path.basename(file, '.png'))
-
-      if (isNaN(time)) {
-        return
-      }
-
-      time = moment(time)
-
-      if (time.isAfter(clean)) {
-        return
-      }
-
-      fs.unlinkSync(path.join(PATH, file))
-
-      console.log('cleaned file %s fetched %s', file, time.fromNow())
-    })
   })
 }
 
@@ -125,7 +122,7 @@ fetch()
 var app = restify.createServer()
 
 app.get('/latest', (req, res) => {
-  if (latestImageLocation === '') {
+  if (!latestImageLocation) {
     res.send({
       type: 'Error',
       data: [{
