@@ -129,8 +129,8 @@ app.get('/latest', (req, res) => {
     res.send({
       type: 'Error',
       data: [{
-        code: '',
-        message: ''
+        code: 404,
+        message: 'No image at present.'
       }]
     })
   } else {
