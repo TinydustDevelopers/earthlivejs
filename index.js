@@ -8,7 +8,7 @@ var format = require('util').format
 var restify = require('restify')
 const cdnify = require('./upload')
 const low = require('lowdb')
-const storage = require('lowdb/file-async')
+const storage = require('lowdb/file-sync')
 
 const db = low('db.json', { storage })
 
@@ -19,7 +19,6 @@ const SPLITS = 4
 var PATH = path.join(__dirname, 'images')
 
 var image = db('images').takeRight()[0]
-
 var latestImageLocation = ''
 
 if (image) {
